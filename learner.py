@@ -13,7 +13,7 @@ from time import time, sleep
 
 from replay_memory import ReplayMemory, LearnerReplayMemory
 from models import ActorNet, CriticNet
-from utils import soft_update, get_obs, calc_priority, invertical_vf
+from utils import soft_update, get_obs, calc_priority, invertical_vf, inverse_invertical_vf
 
 def learner_process(n_actors):
     learner = Learner(n_actors)
@@ -104,7 +104,7 @@ class Learner:
                 next_obs_i = self.burn_in_length + i + self.n_step
                 q_value[i*self.batch_size: (i+1)*self.batch_size] = self.critic(obs_seq[obs_i], action_seq[obs_i])
                 next_q_value = self.target_critic(obs_seq[next_obs_i], self.target_actor(obs_seq[next_obs_i]))
-                target_q_val = reward_seq[obs_i] + (self.gamma ** self.n_step) * (1. - terminal_seq[next_obs_i-1]) * next_q_value
+                target_q_val = reward_seq[obs_i] + (self.gamma ** self.n_step) * (1. - terminal_seq[next_obs_i-1]) * inverse_invertical_vf(next_q_value)
                 target_q_val = invertical_vf(target_q_val)
                 target_q_value[i*self.batch_size: (i+1)*self.batch_size] = target_q_val
             

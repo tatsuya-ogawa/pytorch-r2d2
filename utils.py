@@ -19,3 +19,6 @@ def calc_priority(td_loss, eta=0.9):
 
 def invertical_vf(x):
     return torch.sign(x) * (torch.sqrt(torch.abs(x) + 1) - 1)
+
+def inverse_invertical_vf(y):
+    return torch.sign(y) * ( ( y + torch.sign(y) ) ** 2 - 1 )
